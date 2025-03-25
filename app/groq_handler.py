@@ -99,7 +99,7 @@ class GroqHandler:
                 model=self.model,  # Use the dynamically selected model
                 messages=[
                     {"role": "system", "content": (
-                        "You are a Oracle database 21 assistant. Analyze the provided data and provide insights, recommendations, "
+                        "You are a Oracle database 21 assistant. You have been given a dataset with the following columns: "
                         "and new SQL queries to explore further. Avoid any query or syntax that is not compliant with Oracle 21c."
                     )},
                     {"role": "user", "content": data_prompt}

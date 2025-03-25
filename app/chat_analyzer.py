@@ -3,12 +3,12 @@ import streamlit as st
 class ChatAnalyzer:
     def __init__(self, state_manager):
         self.state = state_manager
+        self.row_limit = 200  # Define row limit for LLM context
 
     def show_chat_section(self):
         """Displays the chat section for interacting with the AI."""
         st.subheader("Chat with AI About the Database Output")
 
-        # Retrieve persisted query context
         if "executed_sql" not in st.session_state or "query_df" not in st.session_state:
             st.error("No query context available. Please execute a query first.")
             return
@@ -42,7 +42,6 @@ class ChatAnalyzer:
                     except Exception as e:
                         st.error(f"Error: {str(e)}")
             
-            # Display the chat response only if it is non-empty
             if self.state.get_state("chat_has_response") and self.state.get_state("chat_ai_response").strip() != "":
                 st.subheader("Chat Response")
                 st.markdown(self.state.get_state("chat_ai_response"))
@@ -54,6 +53,10 @@ class ChatAnalyzer:
 
     def create_chat_prompt(self, sql, df, user_question):
         """Creates the prompt for the AI chat based on the executed SQL and its results."""
+        limited_df = df.head(self.row_limit) if len(df) > self.row_limit else df
+        if len(df) > self.row_limit:
+            st.warning(f"Data context size is high ({len(df)} rows). Chat response is based on the first {self.row_limit} rows only.")
+        
         return f"""
         **Task**: Answer the user's question using the SQL query results below. Follow these steps:
         1. Directly answer the question in natural language.
@@ -63,8 +66,8 @@ class ChatAnalyzer:
         **Executed SQL**:
         {sql}
 
-        **Query Results**:
-        {df.to_string()}
+        **Query Results (limited to {self.row_limit} rows if larger)**:
+        {limited_df.to_string()}
 
         **Question**:
         {user_question}

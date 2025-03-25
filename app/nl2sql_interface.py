@@ -55,15 +55,18 @@ class NL2SQLInterface:
             excel_buffer = io.BytesIO()
             self.state.get_state("query_df").to_excel(excel_buffer, index=False, engine="openpyxl")
             excel_buffer.seek(0)
+            sql = self.state.get_state("executed_sql") or "query"
+            safe_sql = "".join(c for c in sql[:20] if c.isalnum() or c in "_-")  # Short, safe name
+            file_name = f"{safe_sql}_results.xlsx"
             st.download_button(
                 label="Download Results as Excel",
                 data=excel_buffer,
-                file_name="query_results.xlsx",
+                file_name=file_name,
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 key="download_excel"
             )
 
-            # Four buttons for split analysis (adjusted to 3 as per your code)
+            # Three buttons for  analysis 
             st.subheader("Analyze Data")
             col1, col2, col3 = st.columns(3)
             with col1:
