@@ -1,4 +1,4 @@
-This is DataQuest A AI powered oracle database assistance
+This is DataQuest A AI powered oracle database assistant
 
 
 # DataQuest
